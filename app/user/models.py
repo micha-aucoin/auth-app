@@ -7,9 +7,9 @@ from sqlmodel import Field, SQLModel
 
 
 class UserBase(SQLModel):
-    username: str = Field(max_length=255, nullable=False)
+    username: str = Field(max_length=255, nullable=False, unique=True)
     full_name: str = Field(max_length=255, nullable=False)
-    email: str = Field(max_length=255, nullable=False)
+    email: str = Field(max_length=255, nullable=False, unique=True)
     disabled: bool = Field(default=False)
 
     

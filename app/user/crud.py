@@ -1,11 +1,12 @@
 from typing import Optional
 from uuid import UUID
 
-from app.user.models import User, UserCreate, UserPatch
 from fastapi import HTTPException
 from fastapi import status as http_status
 from sqlalchemy import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from app.user.models import User, UserCreate, UserPatch
 
 
 class UserCRUD:
@@ -47,7 +48,7 @@ class UserCRUD:
         return user
 
     async def patch(self, user_id: str | UUID, data: UserPatch) -> User:
-        user = await self.get(user_id=user_id)
+        user = await self.get(user_id=user_id, username=None)
         values = data.dict(exclude_unset=True)
 
         for k, v in values.items():

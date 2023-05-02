@@ -1,10 +1,12 @@
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status as http_status
+from sqlalchemy.exc import IntegrityError
+
 from app.core.models import StatusMessage
 from app.dependencies import get_password_hash
 from app.user.crud import UserCRUD
 from app.user.dependencies import get_user_crud
 from app.user.models import User, UserCreate, UserPatch, UserRead
-from fastapi import APIRouter, Depends
-from fastapi import status as http_status
 
 router = APIRouter()
 
@@ -26,7 +28,15 @@ async def create_user(
 
     # Create a new user instance
     new_user = User(**user_data)
-    user = await users.create(data=new_user)
+    
+    try:
+        user = await users.create(data=new_user)
+    except IntegrityError as e:
+        # Raise an HTTPException with a suitable error message
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail="The username or email is already in use.",
+        ) from e
 
     return user
 
@@ -55,7 +65,15 @@ async def patch_user_by_uuid(
         data: UserPatch,
         users: UserCRUD = Depends(get_user_crud)
 ):
-    user = await users.patch(user_id=user_id, data=data)
+    
+    try:
+        user = await users.patch(user_id=user_id, data=data)
+    except IntegrityError as e:
+        # Raise an HTTPException with a suitable error message
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail="The username or email is already in use.",
+        ) from e
 
     return user
 
