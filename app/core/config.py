@@ -11,3 +11,6 @@ class Settings(BaseSettings):
 
     # Database
     db_async_connection_str: str
+
+    # JWT
+    jwt_secret: str

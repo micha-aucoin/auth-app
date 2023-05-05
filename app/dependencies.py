@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
+from app import settings
 from app.core.models import TokenData
 from app.user.crud import UserCRUD
 from app.user.dependencies import get_user_crud
@@ -12,7 +13,7 @@ from passlib.context import CryptContext
 
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "eb9fdf01e4f1b556cde951d1ac4e5ad3dd519bc6f0ed67f8fb8a54e757144b1d"
+SECRET_KEY = settings.jwt_secret
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -29,11 +30,10 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-
 async def authenticate_user(
-        username: str, 
-        password: str, 
-        users: UserCRUD,
+    username: str,
+    password: str,
+    users: UserCRUD,
 ):
     user = await users.get(user_id=None, username=username)
     if not user:
@@ -54,10 +54,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-
 async def get_current_user(
-        token: Annotated[str, Depends(oauth2_scheme)],
-        users: UserCRUD = Depends(get_user_crud),
+    token: Annotated[str, Depends(oauth2_scheme)],
+    users: UserCRUD = Depends(get_user_crud),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

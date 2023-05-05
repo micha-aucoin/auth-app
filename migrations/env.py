@@ -29,24 +29,33 @@ target_metadata = SQLModel.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 target_metadata.naming_convention = {
-   "ix": "ix_%(column_0_label)s",
-   "uq": "uq_%(table_name)s_%(column_0_name)s",
-   "ck": "ck_%(table_name)s_%(constraint_name)s",
-   "fk": "fk_%(table_name)s_%(column_0_name)"
-         "s_%(referred_table_name)s",
-   "pk": "pk_%(table_name)s"
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)" "s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
 }
 
 from app.user.models import User  # noqa: 'autogenerate' support
 
+pg_driver = os.getenv("PG_DRIVER")
+pg_username = os.getenv("PG_USERNAME")
+pg_password = os.getenv("PG_PASSWORD")
+pg_host = os.getenv("PG_HOST")
+pg_port = os.getenv("PG_PORT")
+pg_database = os.getenv("PG_DATABASE")
+
+pg_url = f"{pg_driver}://{pg_username}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
+
 exclude_tables = loads(os.getenv("DB_EXCLUDE_TABLES"))
 
+
 def filter_db_objects(
-        object,  # noqa: indirect usage
-        name,
-        type_,
-        *args,  # noqa: indirect usage
-        **kwargs  # noqa: indirect usage
+    object,  # noqa: indirect usage
+    name,
+    type_,
+    *args,  # noqa: indirect usage
+    **kwargs,  # noqa: indirect usage
 ):
     if type_ == "table":
         return name not in exclude_tables
@@ -55,6 +64,7 @@ def filter_db_objects(
         return False
 
     return True
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -68,9 +78,9 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = os.getenv("DB_ASYNC_CONNECTION_STR")
+
     context.configure(
-        url=url,
+        url=pg_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -88,7 +98,7 @@ def do_run_migrations(connection: Connection) -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            include_object=filter_db_objects
+            include_object=filter_db_objects,
         )
         context.run_migrations()
 
@@ -99,8 +109,7 @@ async def run_async_migrations() -> None:
 
     """
     config_section = config.get_section(config.config_ini_section)
-    url = os.getenv("DB_ASYNC_CONNECTION_STR")
-    config_section["sqlalchemy.url"] = url
+    config_section["sqlalchemy.url"] = pg_url
 
     connectable = AsyncEngine(
         engine_from_config(
@@ -115,8 +124,6 @@ async def run_async_migrations() -> None:
         await connection.run_sync(do_run_migrations)
 
     await connectable.dispose()
-
-    
 
 
 def run_migrations_online() -> None:
