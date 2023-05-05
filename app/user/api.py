@@ -14,23 +14,19 @@ router = APIRouter()
 @router.post(
     "",
     response_model=UserRead,
-    status_code=http_status.HTTP_201_CREATED
+    status_code=http_status.HTTP_201_CREATED,
 )
 async def create_user(
-        data: UserCreate,
-        users: UserCRUD = Depends(get_user_crud)
+    data: UserCreate,
+    users: UserCRUD = Depends(get_user_crud),
 ):
-    hashed_password = get_password_hash(data.password)
+    user2db = User(
+        **data.dict(),
+        hashed_password=get_password_hash(data.password),
+    )
 
-    # Convert the UserCreate object to a dictionary and add the hashed password
-    user_data = data.dict()
-    user_data["hashed_password"] = hashed_password
-
-    # Create a new user instance
-    new_user = User(**user_data)
-    
     try:
-        user = await users.create(data=new_user)
+        user = await users.create(data=user2db)
     except IntegrityError as e:
         # Raise an HTTPException with a suitable error message
         raise HTTPException(
@@ -41,31 +37,19 @@ async def create_user(
     return user
 
 
-@router.get(
-    "/{user_id}",
-    response_model=UserRead,
-    status_code=http_status.HTTP_200_OK
-)
-async def get_user_by_uuid(
-        user_id: str,
-        users: UserCRUD = Depends(get_user_crud)
-):
+@router.get("/{user_id}", response_model=UserRead, status_code=http_status.HTTP_200_OK)
+async def get_user_by_uuid(user_id: str, users: UserCRUD = Depends(get_user_crud)):
     user = await users.get(user_id=user_id, username=None)
 
     return user
 
 
 @router.patch(
-    "/{user_id}",
-    response_model=UserRead,
-    status_code=http_status.HTTP_200_OK
+    "/{user_id}", response_model=UserRead, status_code=http_status.HTTP_200_OK
 )
 async def patch_user_by_uuid(
-        user_id: str,
-        data: UserPatch,
-        users: UserCRUD = Depends(get_user_crud)
+    user_id: str, data: UserPatch, users: UserCRUD = Depends(get_user_crud)
 ):
-    
     try:
         user = await users.patch(user_id=user_id, data=data)
     except IntegrityError as e:
@@ -79,14 +63,9 @@ async def patch_user_by_uuid(
 
 
 @router.delete(
-    "/{user_id}",
-    response_model=StatusMessage,
-    status_code=http_status.HTTP_200_OK
+    "/{user_id}", response_model=StatusMessage, status_code=http_status.HTTP_200_OK
 )
-async def delete_user_by_uuid(
-        user_id: str,
-        users: UserCRUD = Depends(get_user_crud)
-):
+async def delete_user_by_uuid(user_id: str, users: UserCRUD = Depends(get_user_crud)):
     status = await users.delete(user_id=user_id)
 
     return {"status": status, "message": "The user has been deleted!"}
