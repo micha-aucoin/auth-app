@@ -14,3 +14,5 @@ class Settings(BaseSettings):
 
     # JWT
     jwt_secret: str
+    jwt_algorithm: str
+    jwt_token_expire_minutes: int

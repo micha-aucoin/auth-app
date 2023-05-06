@@ -38,15 +38,6 @@ target_metadata.naming_convention = {
 
 from app.user.models import User  # noqa: 'autogenerate' support
 
-pg_driver = os.getenv("PG_DRIVER")
-pg_username = os.getenv("PG_USERNAME")
-pg_password = os.getenv("PG_PASSWORD")
-pg_host = os.getenv("PG_HOST")
-pg_port = os.getenv("PG_PORT")
-pg_database = os.getenv("PG_DATABASE")
-
-pg_url = f"{pg_driver}://{pg_username}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
-
 exclude_tables = loads(os.getenv("DB_EXCLUDE_TABLES"))
 
 
@@ -78,7 +69,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-
+    pg_url = os.getenv("DB_ASYNC_CONNECTION_STR")
     context.configure(
         url=pg_url,
         target_metadata=target_metadata,
@@ -109,6 +100,7 @@ async def run_async_migrations() -> None:
 
     """
     config_section = config.get_section(config.config_ini_section)
+    pg_url = os.getenv("DB_ASYNC_CONNECTION_STR")
     config_section["sqlalchemy.url"] = pg_url
 
     connectable = AsyncEngine(

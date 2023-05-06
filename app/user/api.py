@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi import status as http_status
-from sqlalchemy.exc import IntegrityError
-
 from app.core.models import StatusMessage
 from app.dependencies import get_password_hash
 from app.user.crud import UserCRUD
 from app.user.dependencies import get_user_crud
 from app.user.models import User, UserCreate, UserPatch, UserRead
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status as http_status
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -37,18 +36,29 @@ async def create_user(
     return user
 
 
-@router.get("/{user_id}", response_model=UserRead, status_code=http_status.HTTP_200_OK)
-async def get_user_by_uuid(user_id: str, users: UserCRUD = Depends(get_user_crud)):
+@router.get(
+    "/{user_id}",
+    response_model=UserRead,
+    status_code=http_status.HTTP_200_OK,
+)
+async def get_user_by_uuid(
+    user_id: str,
+    users: UserCRUD = Depends(get_user_crud),
+):
     user = await users.get(user_id=user_id, username=None)
 
     return user
 
 
 @router.patch(
-    "/{user_id}", response_model=UserRead, status_code=http_status.HTTP_200_OK
+    "/{user_id}",
+    response_model=UserRead,
+    status_code=http_status.HTTP_200_OK,
 )
 async def patch_user_by_uuid(
-    user_id: str, data: UserPatch, users: UserCRUD = Depends(get_user_crud)
+    user_id: str,
+    data: UserPatch,
+    users: UserCRUD = Depends(get_user_crud),
 ):
     try:
         user = await users.patch(user_id=user_id, data=data)
@@ -63,9 +73,14 @@ async def patch_user_by_uuid(
 
 
 @router.delete(
-    "/{user_id}", response_model=StatusMessage, status_code=http_status.HTTP_200_OK
+    "/{user_id}",
+    response_model=StatusMessage,
+    status_code=http_status.HTTP_200_OK,
 )
-async def delete_user_by_uuid(user_id: str, users: UserCRUD = Depends(get_user_crud)):
+async def delete_user_by_uuid(
+    user_id: str,
+    users: UserCRUD = Depends(get_user_crud),
+):
     status = await users.delete(user_id=user_id)
 
     return {"status": status, "message": "The user has been deleted!"}
