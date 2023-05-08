@@ -15,11 +15,6 @@ class HealthCheck(BaseModel):
 class StatusMessage(BaseModel):
     status: bool
     message: str
-    
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
 
 class TokenData(BaseModel):
@@ -32,10 +27,7 @@ class UUIDModel(SQLModel):
         primary_key=True,
         index=True,
         nullable=False,
-        sa_column_kwargs={
-            "server_default": text("gen_random_uuid()"),
-            "unique": True
-        }
+        sa_column_kwargs={"server_default": text("gen_random_uuid()"), "unique": True},
     )
 
 
@@ -43,9 +35,7 @@ class TimestampModel(SQLModel):
     created_at: datetime = Field(
         default_factory=datetime.utcnow,
         nullable=False,
-        sa_column_kwargs={
-            "server_default": text("current_timestamp(0)")
-        }
+        sa_column_kwargs={"server_default": text("current_timestamp(0)")},
     )
 
     updated_at: datetime = Field(
@@ -53,6 +43,6 @@ class TimestampModel(SQLModel):
         nullable=False,
         sa_column_kwargs={
             "server_default": text("current_timestamp(0)"),
-            "onupdate": text("current_timestamp(0)")
-        }
+            "onupdate": text("current_timestamp(0)"),
+        },
     )

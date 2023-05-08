@@ -1,12 +1,15 @@
-from app.user.api import router as user_router
 from fastapi import APIRouter
+
+from app.auth.api import router as auth_router
+from app.user.api import router as user_router
 
 api_router = APIRouter()
 
 include_api = api_router.include_router
 
 routers = (
-    (user_router, "user", "user"),
+    (auth_router, "auth", "auth"),
+    (user_router, "users", "users"),
 )
 
 for router_item in routers:

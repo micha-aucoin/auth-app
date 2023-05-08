@@ -3,8 +3,6 @@ services:
     build: .
     image: auth-app
     container_name: auth-app
-    env_file:
-      - .env
     ports:
       - "8080:80"
     networks:
