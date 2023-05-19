@@ -1,11 +1,8 @@
-from fastapi import Depends
-from passlib.context import CryptContext
 from sqlalchemy import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.core.security import get_password_hash
 from app.user.models import User, UserCreate, UserPatch
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserCRUD:
@@ -18,7 +15,7 @@ class UserCRUD:
     ) -> User:
         user = User(
             **data.dict(),
-            hashed_password=pwd_context.hash(data.password),
+            hashed_password=get_password_hash(data.password),
         )
         self.session.add(user)
         await self.session.commit()

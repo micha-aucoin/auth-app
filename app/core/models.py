@@ -17,10 +17,6 @@ class StatusMessage(BaseModel):
     message: str
 
 
-class TokenData(BaseModel):
-    username: str | None = None
-
-
 class UUIDModel(SQLModel):
     uuid: uuid_pkg.UUID = Field(
         default_factory=uuid_pkg.uuid4,

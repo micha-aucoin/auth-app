@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi import status as http_status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
+from app.auth.models import TokenData
 from app.core.models import StatusMessage
 from app.user.crud import UserCRUD
-from app.user.dependencies import get_current_active_user, get_user_crud
+from app.user.dependencies import get_user_crud, get_valid_token_data
 from app.user.models import UserCreate, UserPatch, UserRead
 
 router = APIRouter()
@@ -15,17 +15,17 @@ router = APIRouter()
 @router.post(
     "",
     response_model=UserRead,
-    status_code=http_status.HTTP_201_CREATED,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
     data: UserCreate,
-    users: UserCRUD = Depends(get_user_crud),
+    users: Annotated[UserCRUD, Depends(get_user_crud)],
 ):
     try:
         user = await users.create(data=data)
     except IntegrityError as e:
         raise HTTPException(
-            status_code=http_status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="The username or email is already in use.",
         ) from e
 
@@ -35,27 +35,32 @@ async def create_user(
 @router.get(
     "",
     response_model=UserRead,
-    status_code=http_status.HTTP_200_OK,
+    status_code=status.HTTP_200_OK,
 )
-async def get_user(current_user: Annotated[UserRead, Depends(get_current_active_user)]):
-    return current_user
+async def get_current_user(
+    users: Annotated[UserCRUD, Depends(get_user_crud)],
+    token_data: Annotated[TokenData, Depends(get_valid_token_data)],
+):
+    user = await users.get(username=token_data.username)
+
+    return user
 
 
 @router.patch(
     "",
     response_model=UserRead,
-    status_code=http_status.HTTP_200_OK,
+    status_code=status.HTTP_200_OK,
 )
 async def patch_user(
-    current_user: Annotated[UserRead, Depends(get_current_active_user)],
     data: UserPatch,
-    users: UserCRUD = Depends(get_user_crud),
+    users: Annotated[UserCRUD, Depends(get_user_crud)],
+    token_data: Annotated[TokenData, Depends(get_valid_token_data)],
 ):
     try:
-        user = await users.patch(username=current_user.username, data=data)
+        user = await users.patch(username=token_data.username, data=data)
     except IntegrityError as e:
         raise HTTPException(
-            status_code=http_status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="The username or email is already in use.",
         ) from e
 
@@ -65,15 +70,15 @@ async def patch_user(
 @router.delete(
     "",
     response_model=StatusMessage,
-    status_code=http_status.HTTP_200_OK,
+    status_code=status.HTTP_200_OK,
 )
 async def delete_user(
-    current_user: Annotated[UserRead, Depends(get_current_active_user)],
-    users: UserCRUD = Depends(get_user_crud),
+    users: Annotated[UserCRUD, Depends(get_user_crud)],
+    token_data: Annotated[TokenData, Depends(get_valid_token_data)],
 ):
-    status = await users.delete(username=current_user.username)
+    status = await users.delete(username=token_data.username)
 
     return {
         "status": status,
-        "message": f"The user, {current_user.username} has been deleted!",
+        "message": f"The user, {token_data.username} has been deleted!",
     }

@@ -1,15 +1,17 @@
 services:
-  auth-app:
-    build: .
-    image: auth-app
-    container_name: auth-app
-    ports:
-      - "8080:80"
-    networks:
-      - users-net
-    depends_on:
-      users-pg:
-        condition: service_healthy
+  # auth-app:
+  #   build: .
+  #   image: auth-app
+  #   container_name: auth-app
+  #   env_file:
+  #     - example.env
+  #   ports:
+  #     - "8080:80"
+  #   networks:
+  #     - users-net
+  #   depends_on:
+  #     users-pg:
+  #       condition: service_healthy
 
   users-pg:
     image: bitnami/postgresql:13
