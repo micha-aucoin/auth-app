@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir --upgrade -r /auth-app/requirements.txt
 
 COPY . /auth-app
 
-FROM ghcr.io/micha-aucoin/ku-toolz:sha-4be1fed as dev-env
+FROM pychal/ku-toolz:latest as dev-env
 
 COPY --from=builder / /
 
