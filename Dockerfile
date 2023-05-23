@@ -11,8 +11,8 @@ COPY . /auth-app
 FROM builder as dev-env
 
 RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
+apt update
+apt install -y --no-install-recommends git
 EOF
 
 RUN <<EOF
