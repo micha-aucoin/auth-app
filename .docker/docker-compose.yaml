@@ -2,7 +2,7 @@ services:
   auth-app:
     build:
       context: .
-      target: builder
+      target: dev-env
     image: auth-app
     container_name: auth-app
     command: sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80'
