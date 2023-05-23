@@ -8,11 +8,20 @@ RUN pip install --no-cache-dir --upgrade -r /auth-app/requirements.txt
 
 COPY . /auth-app
 
-FROM pychal/ku-toolz:latest as dev-env
+FROM builder as dev-env
 
-COPY --from=builder /auth-app /auth-app
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY --from=builder /usr/local/lib/python3.10/ /usr/local/lib/python3.10/
+RUN <<EOF
+apt-get update
+apt-get install -y --no-install-recommends git
+EOF
+
+RUN <<EOF
+useradd -s /bin/bash -m vscode
+groupadd docker
+usermod -aG docker vscode
+EOF
+# install Docker tools (cli, buildx, compose)
+COPY --from=gloursdocker/docker / /
 
 
 
