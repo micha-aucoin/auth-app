@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException, status
-from jose import jwt
+from fastapi import Depends, HTTPException, status
+from jose import JWTError, jwt
 
 from app import settings
+from app.auth.models import TokenData
 from app.core.security import verify_password
-from app.user.crud import UserCRUD
-from app.user.models import UserRead
+from app.users.crud import UserCRUD
+from app.users.models import UserRead
 
 
 class SecureUser:
@@ -57,3 +58,35 @@ class SecureUser:
             algorithm=settings.jwt_algorithm,
         )
         return encoded_jwt
+
+    # async def get_valid_token_data(
+    #     token: Annotated[str, Depends(oauth2_scheme)],
+    # ):
+    #     credentials_exception = HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Could not validate credentials",
+    #         headers={"WWW-Authenticate": "Bearer"},
+    #     )
+
+    #     try:
+    #         payload = jwt.decode(
+    #             token,
+    #             settings.jwt_secret,
+    #             algorithms=[settings.jwt_algorithm],
+    #         )
+
+    #         username: str = payload.get("username")
+    #         email: str = payload.get("email")
+
+    #         if username is None or email is None:
+    #             raise credentials_exception
+
+    #         token_data = TokenData(
+    #             username=username,
+    #             email=email,
+    #         )
+
+    #     except JWTError:
+    #         raise credentials_exception
+
+    #     return token_data

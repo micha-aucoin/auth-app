@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.secure import SecureUser
 from app.core.db import get_async_session
-from app.user.crud import UserCRUD
+from app.users.crud import UserCRUD
 
 
 async def get_user_crud(

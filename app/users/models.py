@@ -1,9 +1,10 @@
 from typing import Optional
 
-from app.core.models import TimestampModel, UUIDModel
-from app.user.examples import ex_user_create, ex_user_patch, ex_user_read
 from pydantic import SecretStr
 from sqlmodel import Field, SQLModel
+
+from app.core.models import TimestampModel, UUIDModel
+from app.users.examples import ex_user_create, ex_user_patch, ex_user_read
 
 
 class UserBase(SQLModel):
@@ -12,15 +13,11 @@ class UserBase(SQLModel):
     email: str = Field(max_length=255, nullable=False, unique=True)
     disabled: bool = Field(default=False)
 
-    
-class User(
-    TimestampModel,
-    UserBase,
-    UUIDModel,
-    table=True
-):
+
+class User(TimestampModel, UserBase, UUIDModel, table=True):
     __tablename__ = "users"
     hashed_password: str = Field(max_length=255, nullable=False)
+
 
 class UserRead(UserBase, UUIDModel):
     class Config:
@@ -29,7 +26,7 @@ class UserRead(UserBase, UUIDModel):
 
 class UserCreate(UserBase):
     password: str
-    
+
     class Config:
         schema_extra = {"example": ex_user_create}
 
@@ -39,5 +36,3 @@ class UserPatch(UserBase):
 
     class Config:
         schema_extra = {"example": ex_user_patch}
-
-
