@@ -14,6 +14,12 @@ RUN apt update && \
     apt install -y --no-install-recommends \
     git
 
+RUN useradd -s /bin/bash -m vscode && \
+    groupadd docker && \
+    usermod -aG docker vscode
+
+COPY --from=gloursdocker/docker / /
+
 
 
 
