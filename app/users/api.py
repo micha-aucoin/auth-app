@@ -37,7 +37,7 @@ async def create_user(
     response_model=UserRead,
     status_code=status.HTTP_200_OK,
 )
-async def get_current_user(
+async def get_user(
     users: Annotated[UserCRUD, Depends(get_user_crud)],
     token_data: Annotated[TokenData, Depends(get_valid_token_data)],
 ):

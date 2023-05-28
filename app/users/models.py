@@ -1,6 +1,5 @@
 from typing import Optional
 
-from pydantic import SecretStr
 from sqlmodel import Field, SQLModel
 
 from app.core.models import TimestampModel, UUIDModel
@@ -14,7 +13,12 @@ class UserBase(SQLModel):
     disabled: bool = Field(default=False)
 
 
-class User(TimestampModel, UserBase, UUIDModel, table=True):
+class User(
+    TimestampModel,
+    UserBase,
+    UUIDModel,
+    table=True,
+):
     __tablename__ = "users"
     hashed_password: str = Field(max_length=255, nullable=False)
 

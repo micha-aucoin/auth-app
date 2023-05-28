@@ -25,7 +25,8 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
 @pytest_asyncio.fixture
 async def async_client():
     async with AsyncClient(
-        app=app, base_url=f"http://{settings.api_v1_prefix}"
+        app=app,
+        base_url=f"http://{settings.api_v1_prefix}",
     ) as client:
         yield client
 
