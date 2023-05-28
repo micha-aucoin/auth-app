@@ -40,7 +40,7 @@ async def register(
 
 
 @router.post(
-    "/login",
+    "/token",
     response_model=Token,
     status_code=status.HTTP_200_OK,
 )
@@ -70,7 +70,7 @@ async def login(
     response_model=StatusMessage,
     status_code=status.HTTP_200_OK,
 )
-async def validate(
+async def validate_token(
     users: Annotated[UserCRUD, Depends(get_user_crud)],
     token_data: Annotated[TokenData, Depends(get_valid_token_data)],
 ):

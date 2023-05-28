@@ -1,7 +1,8 @@
-from app import settings
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from app import settings
 
 db_connection_str = settings.db_async_connection_str
 
