@@ -12,6 +12,8 @@ services:
       - "8080:80"
     networks:
       - users-net
+    volumes:
+      - .:/auth-app
     depends_on:
       users-pg:
         condition: service_healthy
