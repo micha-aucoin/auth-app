@@ -5,13 +5,16 @@ services:
       target: builder
     image: auth-app
     container_name: auth-app
-    command: sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80'
+    command: sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80 --reload'
     env_file:
       - .env.example
     ports:
       - "8080:80"
     networks:
       - users-net
+    # mounting a volume will create permission issues for coverage report
+    # volumes:
+    #   - .:/auth-app
     depends_on:
       users-pg:
         condition: service_healthy

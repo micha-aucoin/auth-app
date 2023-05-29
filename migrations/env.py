@@ -36,7 +36,7 @@ target_metadata.naming_convention = {
     "pk": "pk_%(table_name)s",
 }
 
-from app.user.models import User  # noqa: 'autogenerate' support
+from app.users.models import User  # noqa: 'autogenerate' support
 
 exclude_tables = loads(os.getenv("DB_EXCLUDE_TABLES"))
 
