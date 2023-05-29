@@ -2,19 +2,18 @@ services:
   auth-app:
     build:
       context: .
-      target: builder
+      target: dev-env
     image: auth-app
     container_name: auth-app
-    command: sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload'
+    command: sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80 --reload'
     env_file:
-      - .env.example
+      - .env.dev
     ports:
       - "8080:80"
     networks:
       - users-net
-    # mounting a volume will create permission issues for coverage report
-    # volumes:
-    #   - .:/auth-app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       users-pg:
         condition: service_healthy
@@ -31,7 +30,7 @@ services:
     networks:
       - users-net
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d users_db" ]
+      test: ["CMD-SHELL", "pg_isready -U admin -d users_db"]
       interval: 10s
       timeout: 5s
       retries: 5
