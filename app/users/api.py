@@ -5,9 +5,9 @@ from sqlalchemy.exc import IntegrityError
 
 from app.auth.models import TokenData
 from app.core.models import StatusMessage
-from app.user.crud import UserCRUD
-from app.user.dependencies import get_user_crud, get_valid_token_data
-from app.user.models import UserCreate, UserPatch, UserRead
+from app.users.crud import UserCRUD
+from app.users.dependencies import get_user_crud, get_valid_token_data
+from app.users.models import UserCreate, UserPatch, UserRead
 
 router = APIRouter()
 
@@ -37,7 +37,7 @@ async def create_user(
     response_model=UserRead,
     status_code=status.HTTP_200_OK,
 )
-async def get_current_user(
+async def get_user(
     users: Annotated[UserCRUD, Depends(get_user_crud)],
     token_data: Annotated[TokenData, Depends(get_valid_token_data)],
 ):

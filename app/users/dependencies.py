@@ -8,7 +8,7 @@ from app import settings
 from app.auth.models import TokenData
 from app.core.db import get_async_session
 from app.core.security import oauth2_scheme
-from app.user.crud import UserCRUD
+from app.users.crud import UserCRUD
 
 
 async def get_user_crud(

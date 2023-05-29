@@ -1,0 +1,50 @@
+{
+    "initial_data": {
+        "user": {
+            "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "testuser@example.com",
+            "hashed_password": "$2b$12$DB3ch6XKAeoQAMgsmZ.jbuK9jSYK9oWUxcypVDwX5tVI4sbMXMvVa",
+            "disabled": false
+        }
+    },
+    "case_register_user": {
+        "payload": {
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "testuser@example.com",
+            "password": "testpassword123"
+        },
+        "want": {
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "testuser@example.com",
+            "disabled": false
+        }
+    },
+    "case_login": {
+        "payload": {
+            "username": "testuser",
+            "password": "testpassword123"
+        },
+        "want": {
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "testuser@example.com",
+            "disabled": false
+        }
+    },
+    "case_logout": {
+        "payload": {
+            "username": "testuser",
+            "password": "testpassword123"
+        },
+        "want": {
+            "username": "testuser",
+            "full_name": "Test User",
+            "email": "testuser@example.com",
+            "disabled": false
+        }
+    }
+}

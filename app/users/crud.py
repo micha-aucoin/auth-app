@@ -2,7 +2,7 @@ from sqlalchemy import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.security import get_password_hash
-from app.user.models import User, UserCreate, UserPatch
+from app.users.models import User, UserCreate, UserPatch
 
 
 class UserCRUD:
