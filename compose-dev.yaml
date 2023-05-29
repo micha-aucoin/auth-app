@@ -5,7 +5,7 @@ services:
       target: dev-env
     image: auth-app
     container_name: auth-app
-    command: alembic upgrade head
+    command: 'alembic upgrade head'
     env_file:
       - .env.dev
     ports:
